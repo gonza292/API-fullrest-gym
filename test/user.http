@@ -1,0 +1,26 @@
+### Obtener todos los usuarios
+GET http://localhost:3000/users
+
+
+### Obtener un usuario
+GET http://localhost:3000/users/Gonzalo
+
+
+### Crear usuario
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "username": "pedro",
+    "name": "pedro",
+    "role": "user"
+}
+
+### Modificar usuario
+PATCH http://localhost:3000/users/pedro
+Content-Type: application/json
+
+{
+    "name": "pedro gonzalez"
+}
+
