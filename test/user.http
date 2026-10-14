@@ -1,19 +1,18 @@
 ### Obtener todos los usuarios
 GET http://localhost:3000/users
 
-
 ### Obtener un usuario
-GET http://localhost:3000/users/Gonzalo
+GET http://localhost:3000/users/pedro
 
-
-### Crear usuario
+### Crear usuario en MongoDB
 POST http://localhost:3000/users
 Content-Type: application/json
 
 {
     "username": "pedro",
-    "name": "pedro",
-    "role": "user"
+    "password": "123456",
+    "displayName": "Eva Perez",
+    "email": "evaperez12@gmail.com"
 }
 
 ### Modificar usuario
@@ -21,6 +20,11 @@ PATCH http://localhost:3000/users/pedro
 Content-Type: application/json
 
 {
-    "name": "pedro gonzalez"
+    "role": "joaquin"
 }
 
+### Buscar Pedro
+GET http://localhost:3000/users/pedro
+
+### Eliminar usuario
+DELETE http://localhost:3000/users/pedro    

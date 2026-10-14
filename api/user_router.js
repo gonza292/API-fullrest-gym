@@ -4,18 +4,23 @@ const createUserRouter = (userService) => {
 
   const router = express.Router();
 
-  router.get("/", (req, res) => {
+  router.get("/", async (req, res) => {
 
-    const users = userService.getAll();
+    const users = await userService.getAll();
 
-    res.json(users);
+    res.json(users.map(user => ({
+        username: user.username,
+        displayName: user.displayName,
+        email: user.email,
+        role: user.role
+    })));
 });
 
-router.get("/:username", (req, res) => {
+router.get("/:username", async (req, res) => {
 
     const username  = req.params.username;
 
-    const user = userService.getByUsername(username);
+    const user = await userService.getByUsername(username);
 
     if (!user) {
       return res.status(404).json({ 
@@ -23,16 +28,21 @@ router.get("/:username", (req, res) => {
       });
     }
 
-    res.json(user);
+    res.json({
+        username: user.username,
+        displayName: user.displayName,
+        email: user.email,
+        role: user.role
+    });
   });
 
-  router.post('/', (req, res) => {
+  router.post('/', async (req, res) => {
 
         try {
 
             const user = req.body;
 
-            const newUser = userService.add(user);
+            const newUser = await userService.add(user);
 
             res.status(201).json(newUser);
 
@@ -46,12 +56,12 @@ router.get("/:username", (req, res) => {
 
     });
   
-  router.patch('/:username', (req, res) => {
+  router.patch('/:username', async (req, res) => {
     try {
         const username = req.params.username;
         const data = req.body;
 
-        const updatedUser = userService.update(username, data);
+        const updatedUser = await userService.update(username, data);
 
         if (!updatedUser) {
             return res.status(404).json({
@@ -68,6 +78,21 @@ router.get("/:username", (req, res) => {
 
   });
 
+router.delete("/:username", async (req, res) => {
+    
+    const username = req.params.username;
+
+    const deleted = await userService.removeByUsername(username);
+
+    if (!deleted) {
+        return res.status(404).json({
+            message: "Usuario no encontrado"
+        });
+    }
+
+    res.status(204).send();
+
+});
 return router;
 };
 

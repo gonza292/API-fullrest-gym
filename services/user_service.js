@@ -2,58 +2,46 @@ class UserService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
-    getAll() {
-        return this.userRepository;
+
+    async getAll() {
+        return await this.userRepository.find();
     }
 
-    getByUsername(username) {
-        return this.userRepository.find(
-            user => user.username === username
-        );
+    async getByUsername(username) {
+        return await this.userRepository.findOne({ username });
+    }
+
+    async add(user) {
+        if (!user.username) {
+            throw new Error("El nombre de usuario es obligatorio");
+        }
+
+        if (!user.password) {
+            throw new Error("La contraseña es obligatoria");
+        }
+
+        if (user.password === "1234") {
+            throw new Error("La contraseña no puede ser 1234");
+        }
+
+        const existentUser = await this.userRepository.find({
+            username: user.username
+        });
+
+        if (existentUser.length) {
+            throw new Error("El nombre de usuario ya existe");
+        }
+
+        return this.userRepository.create(user);
+    }
+
+    async removeByUsername(username) {
+        const user = await this.userRepository.findOne({ username });
+        if (!user) {
+            throw new Error("Usuario no encontrado");
+        }
+        return this.userRepository.deleteOne({ username });
+    }
 }
 
-add (user) {
-
-    if (!user.username || !user.name || !user.role) {
-        throw new Error(" faltan datos del usuario ");
-    }
-
-    const userExists = this.getByUsername(user.username);
-
-    if (userExists) {
-        throw new Error("El usuario ya existe");
-    }
-
-    this.userRepository.push(user);
-    
-    return user;
-  
-  }
-
-update(username, data) {
-
-    const user = this.getByUsername(username);
-
-    if (!user) {
-        return undefined;
- }
- if (data.username && data.username !== username) {
-    const userExists = this.getByUsername(data.username);
-
-    if (userExists) {
-        throw new Error("El nuevo nombre de usuario ya existe");
-    }
- }
- if (data.username !== undefined) {
-    user.username = data.username;
- }
- if (data.name !== undefined) {
-    user.name = data.name;
- }  
- if (data.role !== undefined) {
-    user.role = data.role;
- }
-   return user;
-  }
-}
 export default UserService;
